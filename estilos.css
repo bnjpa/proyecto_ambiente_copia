@@ -1,0 +1,127 @@
+/* ===== Reset / base ===== */
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body{
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans";
+  background: #0f172a; /* slate-900 */
+  color: #e2e8f0;      /* slate-200 */
+}
+:root{
+  --c-papel:#3b82f6;      /* azul */
+  --c-plastico:#f59e0b;   /* ámbar */
+  --c-vidrio:#10b981;     /* verde */
+  --c-organico:#84cc16;   /* lima */
+  --c-metal:#f43f5e;      /* rojo/rosa */
+  --panel:#111827;
+  --borde:#1f2937;
+}
+.sr-only{ position:absolute; left:-9999px; }
+
+/* ===== Pantallas ===== */
+.pantalla{ display:none; align-items:center; justify-content:center; height:100%; padding:16px; }
+.pantalla.visible{ display:flex; }
+.panel{
+  width:min(720px, 100%);
+  background:var(--panel);
+  border:1px solid var(--borde);
+  border-radius:16px;
+  padding:24px;
+  box-shadow:0 10px 30px rgba(0,0,0,.4);
+}
+.sub{ opacity:.9; }
+
+/* ===== Botones ===== */
+.btn{
+  background:#22d3ee; color:#0f172a; border:none; border-radius:12px;
+  padding:12px 18px; font-weight:700; cursor:pointer; margin-right:8px;
+}
+.btn:hover{ filter:brightness(1.05); }
+.btn.secundario{ background:#64748b; color:white; }
+
+/* ===== HUD ===== */
+.hud{
+  position:fixed; top:8px; left:50%; transform:translateX(-50%);
+  display:flex; gap:14px; padding:8px 12px;
+  background:rgba(2,6,23,.7); border:1px solid var(--borde); border-radius:12px;
+  z-index:10; font-weight:700;
+}
+
+/* ===== Zona de juego ===== */
+.zona-juego{
+  position:relative;
+  width:min(900px, 100%);
+  height:min(60vh, 540px);
+  margin:80px auto 12px;
+  background:linear-gradient(#0b1022, #0a0f1d);
+  border:1px solid var(--borde);
+  border-radius:16px;
+  overflow:hidden;
+  touch-action:none; /* evita scroll durante drag */
+}
+
+/* Objetos */
+.obj{
+  position:absolute; top:0; left:0;
+  width:clamp(36px,5vw,54px); height:clamp(36px,5vw,54px);
+  display:grid; place-items:center; font-size:clamp(22px,3.2vw,30px);
+  border-radius:12px; background:#1f2937; border:1px solid #334155;
+  box-shadow:0 6px 12px rgba(0,0,0,.35);
+  user-select:none; touch-action:none;
+}
+
+/* ===== Barra de tachos (dentro de la zona, pegada abajo) ===== */
+.tacho-bar{
+  position:absolute; left:0; right:0; bottom:0;
+  padding:8px; background:rgba(2,6,23,.55); backdrop-filter: blur(3px);
+  display:grid; grid-template-columns:repeat(5, 1fr); gap:8px;
+  z-index:5;
+}
+
+/* Un tacho es un botón accesible. La boca es el tercio superior (hitbox real). */
+.tacho{
+  position:relative; display:grid; place-items:center;
+  background:#0b1224; color:#e2e8f0; border:1px solid #334155;
+  border-radius:14px; padding:6px 4px 8px;
+  min-height:110px; cursor:pointer; user-select:none;
+}
+.tacho strong{ margin-top:4px; font-size:.9rem; text-align:center; line-height:1.1; }
+
+/* SVG del tacho (cuerpo/tapa) — colores por tipo */
+.svg-wrap{ width:72px; height:86px; position:relative; }
+.tacho-svg{ width:100%; height:100%; display:block; }
+.tapa{ fill:currentColor; opacity:.95; }
+.asa{ fill:currentColor; opacity:.95; }
+.cuerpo{ fill:currentColor; opacity:.35; }
+.ranura{ fill:currentColor; opacity:.25; }
+
+/* Boca: rectángulo invisible que ocupa ~35% superior. Es el hitbox de acierto. */
+.boca{
+  position:absolute;
+  top:0; left:50%; transform:translateX(-50%);
+  width:80px; height:60px;   /* ← aumenta el área del hitbox */
+  border-radius:10px;
+  /* outline:2px dashed rgba(255,255,255,.25); */ /* para depurar */
+}
+
+/* Colores por material (usamos currentColor del SVG) */
+.t-papel{    color: var(--c-papel); }
+.t-plastico{ color: var(--c-plastico); }
+.t-vidrio{   color: var(--c-vidrio); }
+.t-organico{ color: var(--c-organico); }
+.t-metal{    color: var(--c-metal); }
+
+/* ===== Toast ===== */
+.toast{
+  position:fixed; bottom:16px; left:50%; transform:translateX(-50%);
+  background:#0b5; color:#03150b; padding:10px 14px; border-radius:10px;
+  font-weight:700; box-shadow:0 8px 20px rgba(0,0,0,.35);
+  opacity:0; pointer-events:none; transition:opacity .25s ease, transform .25s ease;
+  max-width:min(90vw, 700px); z-index:20;
+}
+.toast.visible{ opacity:1; transform:translateX(-50%) translateY(-4px); }
+
+/* ===== Responsive ===== */
+@media (max-width:640px){
+  .hud{ gap:10px; font-size:.95rem; }
+  .tacho strong{ font-size:.85rem; }
+}

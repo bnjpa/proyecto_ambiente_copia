@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Clasificador de Basura</title>
+  <link rel="stylesheet" href="estilos.css" />
+</head>
+<body>
+  <main class="app" aria-labelledby="titulo-app">
+    <h1 id="titulo-app" class="sr-only">Clasificador de Basura</h1>
+
+    <!-- Pantalla: INICIO -->
+    <section id="pantalla-inicio" class="pantalla visible" role="dialog" aria-labelledby="titulo-inicio">
+      <div class="panel">
+        <h2 id="titulo-inicio">Clasificador de Basura ♻️</h2>
+        <p class="sub">Arrastrá los objetos al tacho correcto o usá las teclas <strong>1–5</strong>.</p>
+        <ul class="instrucciones">
+          <li>⏱️ Tiempo: 60s</li>
+          <li>✅ +1 acierto | ❌ −1 error</li>
+          <li>🔥 Combo por rachas acertadas</li>
+          <li>📈 Dificultad sube con el tiempo</li>
+        </ul>
+        <button id="btn-jugar" class="btn" aria-label="Comenzar partida">Jugar</button>
+
+        <details class="ayuda">
+          <summary>Controles y accesibilidad</summary>
+          <ul>
+            <li>Mouse/táctil: arrastrá el objeto al tacho (boca = tercio superior).</li>
+            <li>Teclado: <kbd>1</kbd> Papel, <kbd>2</kbd> Plástico, <kbd>3</kbd> Vidrio, <kbd>4</kbd> Orgánico, <kbd>5</kbd> Metal.</li>
+            <li>Los tachos tienen etiquetas, colores y buen contraste.</li>
+          </ul>
+        </details>
+      </div>
+    </section>
+
+    <!-- HUD -->
+    <header id="hud" class="hud" aria-live="polite" aria-atomic="true">
+      <div>⏱️ <span id="hud-tiempo">60</span>s</div>
+      <div>🏆 Puntos: <span id="hud-puntos">0</span></div>
+      <div>🔥 Combo: <span id="hud-combo">x1</span></div>
+      <div>⭐ Récord: <span id="hud-record">0</span></div>
+    </header>
+
+    <!-- Pantalla: JUEGO -->
+    <section id="pantalla-juego" class="pantalla" aria-label="Zona de juego">
+      <div id="zona-juego" class="zona-juego" role="application" aria-describedby="ayuda-zona">
+        <p id="ayuda-zona" class="sr-only">
+          Arrastrá los objetos que caen a la boca del tacho correcto o usá las teclas 1 a 5.
+        </p>
+        <!-- Objetos se crean dinámicamente acá -->
+
+        <!-- BARRA DE TACHOS pegada al borde inferior de la zona -->
+        <nav class="tacho-bar" aria-label="Tachos de reciclaje">
+          <!-- Cada tacho: SVG simple (cuerpo + tapa) + etiqueta. 
+               La boca (hitbox) es el DIV .boca, sólo cuenta el tercio superior. -->
+          <button class="tacho t-papel" data-bin="papel" aria-label="Tacho de Papel (tecla 1)">
+            <div class="svg-wrap" aria-hidden="true">
+              <svg viewBox="0 0 100 120" class="tacho-svg">
+                <!-- Tapa -->
+                <rect x="15" y="8" width="70" height="14" rx="4" class="tapa"/>
+                <!-- Asa -->
+                <rect x="42" y="2" width="16" height="8" rx="3" class="asa"/>
+                <!-- Cuerpo -->
+                <rect x="20" y="22" width="60" height="86" rx="8" class="cuerpo"/>
+                <!-- Líneas verticales -->
+                <rect x="32" y="26" width="6" height="78" rx="3" class="ranura"/>
+                <rect x="47" y="26" width="6" height="78" rx="3" class="ranura"/>
+                <rect x="62" y="26" width="6" height="78" rx="3" class="ranura"/>
+              </svg>
+            </div>
+            <div class="boca" aria-hidden="true"></div>
+            <strong>Papel <small>[1]</small></strong>
+          </button>
+
+          <button class="tacho t-plastico" data-bin="plástico" aria-label="Tacho de Plástico (tecla 2)">
+            <div class="svg-wrap" aria-hidden="true">
+              <svg viewBox="0 0 100 120" class="tacho-svg">
+                <rect x="15" y="8" width="70" height="14" rx="4" class="tapa"/>
+                <rect x="42" y="2" width="16" height="8" rx="3" class="asa"/>
+                <rect x="20" y="22" width="60" height="86" rx="8" class="cuerpo"/>
+                <rect x="32" y="26" width="6" height="78" rx="3" class="ranura"/>
+                <rect x="47" y="26" width="6" height="78" rx="3" class="ranura"/>
+                <rect x="62" y="26" width="6" height="78" rx="3" class="ranura"/>
+              </svg>
+            </div>
+            <div class="boca" aria-hidden="true"></div>
+            <strong>Plástico <small>[2]</small></strong>
+          </button>
+
+          <button class="tacho t-vidrio" data-bin="vidrio" aria-label="Tacho de Vidrio (tecla 3)">
+            <div class="svg-wrap" aria-hidden="true">
+              <svg viewBox="0 0 100 120" class="tacho-svg">
+                <rect x="15" y="8" width="70" height="14" rx="4" class="tapa"/>
+                <rect x="42" y="2" width="16" height="8" rx="3" class="asa"/>
+                <rect x="20" y="22" width="60" height="86" rx="8" class="cuerpo"/>
+                <rect x="32" y="26" width="6" height="78" rx="3" class="ranura"/>
+                <rect x="47" y="26" width="6" height="78" rx="3" class="ranura"/>
+                <rect x="62" y="26" width="6" height="78" rx="3" class="ranura"/>
+              </svg>
+            </div>
+            <div class="boca" aria-hidden="true"></div>
+            <strong>Vidrio <small>[3]</small></strong>
+          </button>
+
+          <button class="tacho t-organico" data-bin="orgánico" aria-label="Tacho Orgánico (tecla 4)">
+            <div class="svg-wrap" aria-hidden="true">
+              <svg viewBox="0 0 100 120" class="tacho-svg">
+                <rect x="15" y="8" width="70" height="14" rx="4" class="tapa"/>
+                <rect x="42" y="2" width="16" height="8" rx="3" class="asa"/>
+                <rect x="20" y="22" width="60" height="86" rx="8" class="cuerpo"/>
+                <rect x="32" y="26" width="6" height="78" rx="3" class="ranura"/>
+                <rect x="47" y="26" width="6" height="78" rx="3" class="ranura"/>
+                <rect x="62" y="26" width="6" height="78" rx="3" class="ranura"/>
+              </svg>
+            </div>
+            <div class="boca" aria-hidden="true"></div>
+            <strong>Orgánico <small>[4]</small></strong>
+          </button>
+
+          <button class="tacho t-metal" data-bin="metal" aria-label="Tacho de Metal (tecla 5)">
+            <div class="svg-wrap" aria-hidden="true">
+              <svg viewBox="0 0 100 120" class="tacho-svg">
+                <rect x="15" y="8" width="70" height="14" rx="4" class="tapa"/>
+                <rect x="42" y="2" width="16" height="8" rx="3" class="asa"/>
+                <rect x="20" y="22" width="60" height="86" rx="8" class="cuerpo"/>
+                <rect x="32" y="26" width="6" height="78" rx="3" class="ranura"/>
+                <rect x="47" y="26" width="6" height="78" rx="3" class="ranura"/>
+                <rect x="62" y="26" width="6" height="78" rx="3" class="ranura"/>
+              </svg>
+            </div>
+            <div class="boca" aria-hidden="true"></div>
+            <strong>Metal <small>[5]</small></strong>
+          </button>
+        </nav>
+      </div>
+    </section>
+
+    <!-- Mensajes/feedback educativo -->
+    <div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+
+    <!-- Pantalla: RESULTADO -->
+    <section id="pantalla-resultado" class="pantalla" role="dialog" aria-labelledby="titulo-resultado" aria-modal="true">
+      <div class="panel">
+        <h2 id="titulo-resultado">Resultado</h2>
+        <p><strong>Puntaje:</strong> <span id="res-puntos">0</span></p>
+        <p><strong>Aciertos:</strong> <span id="res-aciertos">0</span> | <strong>Errores:</strong> <span id="res-errores">0</span></p>
+        <p><strong>Récord:</strong> <span id="res-record">0</span></p>
+        <button id="btn-reintentar" class="btn" aria-label="Jugar de nuevo">Reintentar</button>
+        <button id="btn-inicio" class="btn secundario" aria-label="Volver al inicio">Inicio</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
